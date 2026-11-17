@@ -1,0 +1,78 @@
+/* ================= 双主题变量 ================= */
+body.theme-dark{
+  --bg:#10131a;
+  --card:rgba(26,30,42,.82);
+  --card-solid:#1a1e2a;
+  --text:#e8eaf0;
+  --muted:#8b93a7;
+  --border:rgba(255,255,255,.09);
+  --primary:#5b8cff;
+  --primary-h:#7c9dff;
+  --danger:#ff5b6e;
+  --input:rgba(255,255,255,.06);
+  --shadow:0 8px 28px rgba(0,0,0,.45);
+}
+body.theme-light{
+  --bg:#eef1f6;
+  --card:rgba(255,255,255,.86);
+  --card-solid:#ffffff;
+  --text:#1f2430;
+  --muted:#69707d;
+  --border:rgba(20,25,40,.12);
+  --primary:#3b6ef5;
+  --primary-h:#2c5be0;
+  --danger:#e5484d;
+  --input:rgba(20,25,40,.05);
+  --shadow:0 8px 24px rgba(30,40,70,.12);
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:system-ui,-apple-system,"Segoe UI",Roboto,"PingFang SC","Microsoft YaHei",sans-serif;
+  color:var(--text);min-height:100vh;background:var(--bg);
+}
+
+/* ================= 背景层：纯色/渐变/图片统一走这里 ================= */
+body::before{
+  content:"";position:fixed;inset:0;z-index:-2;
+  background:var(--bg-layer,none);
+  background-size:var(--bg-size,cover);
+  background-position:center;
+  background-repeat:no-repeat;
+  opacity:var(--bg-alpha,1);
+}
+
+/* ================= 通用控件 ================= */
+.btn{border:1px solid var(--border);background:var(--input);color:var(--text);
+  padding:8px 14px;border-radius:8px;cursor:pointer;font-size:14px;transition:.15s}
+.btn:hover{border-color:var(--primary);color:var(--primary)}
+.btn-primary{background:var(--primary);border-color:transparent;color:#fff;font-weight:600}
+.btn-primary:hover{background:var(--primary-h);color:#fff}
+.btn-danger{color:var(--danger)}
+.btn-sm{padding:5px 10px;font-size:13px}
+.btn-icon{padding:6px 9px}
+
+input,select,textarea{
+  width:100%;background:var(--input);border:1px solid var(--border);
+  border-radius:8px;padding:9px 12px;color:var(--text);font-size:14px;
+  font-family:inherit;outline:none;transition:border-color .15s}
+input:focus,select:focus,textarea:focus{border-color:var(--primary)}
+textarea{resize:vertical;min-height:64px}
+input[type=range]{padding:0}
+input[type=color]{padding:2px;height:38px;width:52px;flex:none;cursor:pointer}
+input[type=checkbox]{width:auto}
+label{display:block;font-size:13px;color:var(--muted);margin:12px 0 5px}
+
+.row{display:flex;gap:10px;align-items:center}
+.muted{color:var(--muted)}
+
+/* ================= 弹窗 ================= */
+.modal-mask{position:fixed;inset:0;background:rgba(8,10,16,.55);backdrop-filter:blur(3px);
+  display:none;align-items:flex-start;justify-content:center;z-index:100;padding:40px 16px;overflow:auto}
+.modal-mask.open{display:flex}
+.modal{background:var(--card-solid);border:1px solid var(--border);border-radius:14px;
+  width:100%;max-width:520px;padding:22px;box-shadow:var(--shadow)}
+.modal.wide{max-width:680px}
+.modal h3{font-size:17px;margin-bottom:4px}
+.modal .sub{color:var(--muted);font-size:13px;margin-bottom:14px}
+.modal-foot{display:flex;justify-content:flex-end;gap:10px;margin-top:20px}

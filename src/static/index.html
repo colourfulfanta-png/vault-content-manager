@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Vault · 保管库</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔐</text></svg>">
+  <link rel="stylesheet" href="base.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="theme-dark">
+
+<!-- ======== 顶栏 ======== -->
+<header class="topbar">
+  <span class="logo" id="brandLogo">🔐 Vault</span>
+  <input type="search" id="searchBox" name="vault_q" autocomplete="off" autocapitalize="off" spellcheck="false" readonly onfocus="this.removeAttribute('readonly')" placeholder="搜索标题 / 字段…">
+  <select id="typeFilter"></select>
+  <div class="spacer"></div>
+  <button class="btn btn-sm" id="btnTypes">类型管理</button>
+  <button class="btn btn-sm btn-primary" id="btnNew">＋ 新建条目</button>
+  <button class="btn btn-icon" id="btnSecurity" title="账号安全（邮箱 / 恢复码）">🛡️</button>
+  <button class="btn btn-icon" id="btnBackup" title="备份 / 恢复">💾</button>
+  <button class="btn btn-icon" id="btnBg" title="背景设置">🎨</button>
+  <button class="btn btn-icon" id="btnTheme" title="切换主题">🌓</button>
+  <button class="btn btn-icon" id="btnLock" title="锁定">🔒</button>
+</header>
+
+<main class="main">
+  <div class="grid" id="grid"></div>
+  <div class="empty" id="empty" hidden>暂无条目，点击右上角「＋ 新建条目」</div>
+</main>
+
+<!-- ======== 选择类型（新建时） ======== -->
+<div class="modal-mask" id="pickModal"><div class="modal">
+  <h3>选择类型</h3>
+  <div id="pickList" style="display:flex;flex-wrap:wrap;gap:10px;margin-top:14px"></div>
+</div></div>
+
+<!-- ======== 条目详情 ======== -->
+<div class="modal-mask" id="detailModal"><div class="modal">
+  <h3 id="dTitle"></h3>
+  <div class="sub" id="dType"></div>
+  <div id="dFields"></div>
+  <div class="modal-foot">
+    <button class="btn" id="dEdit">编辑</button>
+    <button class="btn btn-danger" id="dDel">删除</button>
+    <button class="btn" data-close>关闭</button>
+  </div>
+</div></div>
+
+<!-- ======== 条目表单 ======== -->
+<div class="modal-mask" id="itemModal"><div class="modal wide">
+  <h3 id="iTitle"></h3>
+  <label>标题 <span class="muted">（必填）</span></label>
+  <input id="iTitleInput" autocomplete="off" placeholder="如：GitHub 主账号">
+  <div id="iFields"></div>
+  <div class="modal-foot">
+    <button class="btn btn-primary" id="iSave">保存</button>
+    <button class="btn" data-close>取消</button>
+  </div>
+</div></div>
+
+<!-- ======== 类型列表 ======== -->
+<div class="modal-mask" id="typesModal"><div class="modal">
+  <h3>类型管理</h3>
+  <div class="sub">字段可选：字符 / 长文本 / 数值 / 枚举（带可选项）/ 网址；每个字段可单独加密、可设必填</div>
+  <div id="typeList"></div>
+  <div class="modal-foot">
+    <button class="btn btn-primary" id="tAdd">＋ 新类型</button>
+    <button class="btn" data-close>关闭</button>
+  </div>
+</div></div>
+
+<!-- ======== 类型编辑 ======== -->
+<div class="modal-mask" id="typeEditModal"><div class="modal wide">
+  <h3 id="teTitle"></h3>
+  <label>类型名称</label><input id="teName" autocomplete="off" placeholder="如：SSL 证书">
+  <label>图标（emoji）</label><input id="teIcon" autocomplete="off" placeholder="📦">
+  <label class="row" style="gap:6px;margin:10px 0 0;color:var(--text);font-size:14px">
+    <input type="checkbox" id="teDup">允许重复标题（含加密字段的类型不可开启）
+  </label>
+  <div id="teFields"></div>
+  <button class="btn btn-sm" id="teAddField" style="margin-top:12px">＋ 添加字段</button>
+  <div class="modal-foot">
+    <button class="btn btn-primary" id="teSave">保存</button>
+    <button class="btn" data-close id="teCancel">取消</button>
+  </div>
+</div></div>
+
+<!-- ======== 背景设置（无改动） ======== -->
+<div class="modal-mask" id="setModal"><div class="modal">
+  <h3>🎨 背景设置</h3>
+  <div class="sub">改动实时生效，自动保存在本浏览器</div>
+  <div class="set-grid">
+    <label>背景模式</label>
+    <select id="sMode">
+      <option value="color">纯色 / 跟随主题</option>
+      <option value="gradient">渐变</option>
+      <option value="image">图片</option>
+    </select>
+    <div id="gColor" style="contents">
+      <label>颜色值</label>
+      <input id="sColor" placeholder="#10131a / rgb(16,19,26) / hsl(220,25%,10%)，留空跟随主题">
+    </div>
+    <div id="gGrad" style="contents">
+      <label>起始色</label>
+      <div class="row"><input type="color" id="sGradFrom"><input id="sGradFromText"></div>
+      <label>结束色</label>
+      <div class="row"><input type="color" id="sGradTo"><input id="sGradToText"></div>
+      <label>角度</label>
+      <input type="number" id="sGradAngle" min="0" max="360">
+      <label>自定义渐变（高级，优先级更高）</label>
+      <input id="sGradCSS" placeholder="如：radial-gradient(circle at 30% 30%, #5b8cff, #10131a)">
+    </div>
+    <div id="gImage" style="contents">
+      <label>图片来源</label>
+      <div class="row">
+        <input id="sImageUrl" placeholder="图片 URL">
+        <label class="btn btn-sm" style="margin:0;flex:none;cursor:pointer">选文件
+          <input type="file" id="sImageFile" accept="image/*" hidden>
+        </label>
+      </div>
+      <label>填充方式</label>
+      <select id="sFit">
+        <option value="cover">裁切 cover（等比铺满，超出裁掉）</option>
+        <option value="stretch">拉伸 stretch（强行 100% 填满，可能变形）</option>
+        <option value="contain">自适应 contain（完整显示，可能留边）</option>
+      </select>
+    </div>
+    <label>不透明度 Alpha</label>
+    <input type="range" id="sAlpha" min="0" max="100">
+  </div>
+  <div class="modal-foot">
+    <button class="btn" id="sReset">恢复默认</button>
+    <button class="btn btn-primary" data-close>完成</button>
+  </div>
+</div></div>
+
+<!-- ======== 账号安全（密保邮箱 / 恢复码） ======== -->
+<div class="modal-mask" id="secModal"><div class="modal">
+  <h3>🛡️ 账号安全</h3>
+  <div class="sub">修改邮箱 / 重新生成恢复码前，需要输入当前主密码验证身份</div>
+  <label>用户名</label>
+  <input id="secUser" readonly>
+  <label>密保邮箱（选填）</label>
+  <input id="secEmail" placeholder="例如 me@example.com">
+  <label>当前主密码（仅用于本次验证，不会保存）</label>
+  <input id="secProof" type="password" autocomplete="current-password">
+  <div class="row" style="gap:10px;margin-top:10px;flex-wrap:wrap">
+    <button class="btn btn-sm btn-primary" id="secEmailSave">保存邮箱</button>
+    <button class="btn btn-sm" id="secRecoveryGen">生成 / 重新生成恢复码</button>
+  </div>
+  <div id="secMsg" style="margin-top:10px;font-size:13px;color:var(--muted)"></div>
+  <div id="secRecoveryBox" hidden style="margin-top:12px;border:1px dashed var(--border);border-radius:10px;padding:12px">
+    <div class="muted" style="font-size:13px">恢复码（只显示这一次，请保存好；忘记主密码时用它找回）</div>
+    <div id="secRecoveryCode" style="font-size:19px;letter-spacing:2px;text-align:center;padding:10px 0;font-weight:700;user-select:all"></div>
+    <div class="row" style="gap:8px;justify-content:center">
+      <button class="btn btn-sm" id="secRecoveryCopy">复制</button>
+      <button class="btn btn-sm" id="secRecoveryDownload">下载 .txt</button>
+    </div>
+  </div>
+  <label style="margin-top:16px">品牌（仅保存在本浏览器）</label>
+  <div class="row" style="gap:8px;flex-wrap:wrap">
+    <input id="brandIcon" maxlength="4" style="width:64px;text-align:center" placeholder="🔐">
+    <input id="brandTitleInput" style="flex:1;min-width:120px" placeholder="Vault">
+    <input id="brandSubInput" style="flex:2;min-width:160px" placeholder="个人密码与资产保管库">
+    <button class="btn btn-sm" id="brandSave">保存品牌</button>
+  </div>
+  <div id="brandMsg" style="margin-top:8px;font-size:13px;color:var(--muted)"></div>
+  <div class="modal-foot"><button class="btn" data-close>关闭</button></div>
+</div></div>
+
+<!-- ======== 备份 / 恢复 ======== -->
+<div class="modal-mask" id="backupModal"><div class="modal">
+  <h3>💾 备份 / 恢复</h3>
+  <div class="sub">导出为加密文件（用你的主密码才能解密），换设备或误删后可以恢复</div>
+  <div class="row" style="gap:10px;flex-wrap:wrap">
+    <button class="btn btn-primary" id="bkExport">导出备份</button>
+    <label class="btn" style="margin:0;flex:none;cursor:pointer">导入备份
+      <input type="file" id="bkImportFile" accept=".json,application/json" hidden>
+    </label>
+  </div>
+  <div id="bkMsg" style="margin-top:12px;font-size:13px;color:var(--muted)"></div>
+  <div class="modal-foot"><button class="btn" data-close>关闭</button></div>
+</div></div>
+
+<script src="crypto.js"></script>
+<script src="bg.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

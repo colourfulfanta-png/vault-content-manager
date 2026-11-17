@@ -1,0 +1,25 @@
+# 本地专用配置：不需要 Cloudflare 账号，完全离线运行
+#
+# 启动方式（任选）：
+#   pwsh ./start-local.ps1          # Windows
+#   bash ./start-local.sh           # macOS / Linux
+#   npx wrangler dev --config wrangler.local.toml
+#
+# 注意：database_id 故意写成 "local"，从本分支直接 `wrangler deploy` 会失败——
+#       这是安全设计，避免误把本地配置部署上线。要部署请回 main 分支。
+
+name = "vault-local"
+main = "src/index.ts"
+compatibility_date = "2025-01-01"
+
+[assets]
+directory = "src/static"
+binding = "ASSETS"
+run_worker_first = true
+
+[[d1_databases]]
+binding = "DB"
+database_name = "vault"
+database_id = "local"
+
+# 本地开发不需要自定义域名 / JWT_SECRET（会自动生成并存在本地 D1 的 settings 表）

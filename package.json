@@ -1,0 +1,13 @@
+{
+  "dependencies": {
+    "hono": "^4.13.19"
+  },
+  "devDependencies": {
+    "wrangler": "^4.164.0"
+  },
+  "scripts": {
+    "dev": "wrangler dev --config wrangler.local.toml",
+    "db:local": "wrangler d1 execute vault --local --config wrangler.local.toml --file schema.sql",
+    "check": "node --check src/static/app.js && node --check src/static/login.js && node --check src/static/crypto.js && node --check src/static/bg.js"
+  }
+}

@@ -1,0 +1,53 @@
+/* ================= 顶栏 ================= */
+.topbar{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:10px;
+  padding:10px 18px;background:var(--card);backdrop-filter:blur(16px);
+  border-bottom:1px solid var(--border);flex-wrap:wrap}
+.logo{font-weight:700;font-size:16px;white-space:nowrap;margin-right:6px}
+.topbar input[type=search]{width:210px}
+.topbar select{width:auto}
+.topbar .spacer{flex:1}
+
+/* ================= 内容区 ================= */
+.main{max-width:1180px;margin:0 auto;padding:22px 18px 60px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:14px}
+.empty{text-align:center;color:var(--muted);padding:60px 0}
+
+.item-card{background:var(--card);backdrop-filter:blur(14px);border:1px solid var(--border);
+  border-radius:12px;padding:14px 16px;cursor:pointer;transition:.18s}
+.item-card:hover{transform:translateY(-2px);border-color:var(--primary);box-shadow:var(--shadow)}
+.item-card h4{font-size:15px;margin-bottom:6px;display:flex;gap:8px;align-items:center}
+.item-card .preview{font-size:13px;color:var(--muted);overflow:hidden;
+  text-overflow:ellipsis;white-space:nowrap}
+
+/* ================= 详情字段行 ================= */
+.field-row{display:flex;justify-content:space-between;gap:14px;
+  padding:9px 0;border-bottom:1px dashed var(--border)}
+.field-row:last-child{border:none}
+.field-row .k{color:var(--muted);font-size:13px;white-space:nowrap;padding-top:2px}
+.field-row .v{text-align:right;word-break:break-all;font-size:14px}
+.field-row .v a{color:var(--primary);text-decoration:none}
+.field-row .v a:hover{text-decoration:underline}
+.secret-text{letter-spacing:2px}
+
+/* ================= 类型管理 ================= */
+.type-field{border:1px solid var(--border);border-radius:10px;
+  padding:10px 12px;margin-top:10px;background:var(--input)}
+.type-field .row{flex-wrap:wrap}
+.type-field .tf-label{flex:1;min-width:120px}
+.enum-opts{margin-top:8px;display:none}
+.enum-opts.show{display:block}
+
+/* ================= 背景设置 ================= */
+.set-grid{display:grid;grid-template-columns:110px 1fr;gap:10px 12px;align-items:center;font-size:14px}
+.set-grid label{margin:0}
+.err{border-color:var(--danger)!important}
+.req{color:var(--danger);margin-left:3px;font-weight:700}
+/* 密码掩码：用 CSS 圆点代替 type=password，避开浏览器自动填充 */
+input.masked{-webkit-text-security:disc}
+input.masked.reveal{-webkit-text-security:none}
+/* 防自动填充：readonly 直至获得焦点 */
+input[readonly]{opacity:.85}
+
+/* 字段复制 / 置顶按钮 */
+.copy-btn{margin-left:6px;padding:2px 6px;font-size:12px;vertical-align:middle}
+.pin-btn{float:right;padding:2px 6px;font-size:12px;opacity:.8}
