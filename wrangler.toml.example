@@ -1,0 +1,27 @@
+# ============================================================
+# 配置模板：复制为 wrangler.toml 后再填写自己的信息
+#   Windows:  copy wrangler.toml.example wrangler.toml
+#   macOS/Linux: cp wrangler.toml.example wrangler.toml
+#
+# 部署前把 database_id 换成自己的 D1 ID（npx wrangler d1 create vault 会打印）
+# 不想用 Cloudflare、只本地运行：直接用 local 分支的 wrangler.local.toml，不需要本文件
+# ============================================================
+
+name = "vault"
+main = "src/index.ts"
+compatibility_date = "2025-01-01"
+
+[assets]
+directory = "src/static"
+binding = "ASSETS"
+run_worker_first = true
+
+[[d1_databases]]
+binding = "DB"
+database_name = "vault"
+database_id = "REPLACE_WITH_YOUR_D1_ID"
+
+# 可选：绑定自定义域名（换成你自己的域名；需要域名已托管在同一 Cloudflare 账号）
+# [[routes]]
+# pattern = "vault.example.com"
+# custom_domain = true

@@ -1,0 +1,23 @@
+# 本地真实配置（含你自己的 D1 ID / 域名，不入库；模板见 wrangler.toml.example）
+wrangler.toml
+.dev.vars*
+.env*
+
+# 依赖与构建产物
+node_modules/
+.pnpm-store/
+
+# Wrangler 本地状态（含本地 D1 数据，不要提交）
+.wrangler/
+
+# 验证截图 / 临时文件
+.dsh-shots/
+*.log
+*.tmp
+
+# 系统文件
+.DS_Store
+Thumbs.db
+
+# 本地备份压缩包（备份放在项目外，但如果误放进来也不提交）
+backup*.zip
